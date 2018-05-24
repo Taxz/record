@@ -1,0 +1,33 @@
+
+public String getTree(String id,List<Catalogue> list) {
+        String str = getStr(id, list);
+        Pattern p1 = Pattern.compile("expanded:true,children:\\[\\]");
+        Matcher matcher = p1.matcher(str);
+        str = matcher.replaceAll("leaf:true");
+        Pattern p2 = Pattern.compile(",]}");
+        Matcher xm = p2.matcher(str);
+        str = xm.replaceAll("]}");
+        str = str.substring(0, str.length() - 1);
+        return str;
+    }
+
+    public String getStr(String id,List<Catalogue> list) {
+        String srt = "";
+        List<Catalogue> zl = getList(id,list);
+        for (int var = 0; var < zl.size(); var++) {
+            srt += "{text:" + zl.get(var).getName() + ",id:" + zl.get(var).getId()+",expanded:true,children:["+ getStr(zl.get(var).getId(),list)+"]}";
+            srt +=",";
+        }
+        return srt;
+    }
+
+    public List<Catalogue> getList(String id,List<Catalogue> list) {
+
+        List<Catalogue> z = new ArrayList<>();
+        for (Catalogue l : list) {
+            if (l.getParentId().equals(id)) {
+                z.add(l);
+            }
+        }
+        return z;
+    }
