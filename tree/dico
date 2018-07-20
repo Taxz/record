@@ -1,0 +1,44 @@
+public class DcScMessageServiceImpl implements DcScMessageService {
+
+    
+    public List<DcScMessageInfo> getMessageList(String id) {
+        List<DcScMessageInfo> list = dcScMessageMapper.getMessageList(id);
+        List<DcScMessageInfo> result = new ArrayList<>();
+        if (list.size() > 0) {
+            for (DcScMessageInfo var : list) {
+                if (var.getReplyId().equals("root")) {
+                    var.setReply(getChild(var, list));
+                    result.add(var);
+                }
+            }
+        }
+        return result;
+    }
+
+    private List<DcScMessageInfo> getChild(DcScMessageInfo obj, List<DcScMessageInfo> list) {
+        List<DcScMessageInfo> res = new ArrayList<>();
+        for (DcScMessageInfo var2 : list) {
+            if (var2.getReplyId().equals(obj.getMessageId())){
+                var2.setReply(getChild(var2,list));
+                res.add(var2);
+            }
+
+        }
+        return res;
+    }
+}
+
+@Data
+public class DcScMessageInfo {
+    private String messageId;
+    private String messageType;
+    private String content;
+    private String sender;
+    private String senderId;
+    private Date createTime;
+    private String replyId;
+    private String receiver;
+    private String title;
+    private String receiverId;
+    private List<DcScMessageInfo> reply;
+}
